@@ -1,5 +1,16 @@
 #!/bin/bash
+# Checks there is at least one arg
+if [ $# -lt 1 ]; then
+    echo "you must provide the skeleton name"
+    echo ./get-skel.sh rtfm;
+    exit 1
+fi
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 URL="$(wget -q -O - https://getgrav.org/downloads/skeletons | grep -o '<a .*href=.*>' | sed -e 's/<a/\n<a/g' | sed -e 's/<a .*href=['"'"'"]//' -e 's/["'"'"'].*$//' -e '/^$/ d' |grep https  |grep download |grep $1)"
 read -p "download from $URL ? (Press a key or CTRL+C)"
-(cd tmp && wget -c $URL)
-(cd tmp && unzip *)
+(rm -Rf /tmp/getskel && mkdir /tmp/getskel/)
+(cd /tmp/getskel/ && wget -c $URL)
+(cd /tmp/getskel/ && unzip *)
+(rm /tmp/getskel/* 2> /dev/null)
+(cd /tmp/getskel/*/ && zip -o "$1.zip" -r * && mv "$1.zip" $DIR/)

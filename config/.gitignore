@@ -3,6 +3,6 @@
 # Except this file
 !.gitignore
 !default.env
-!sample.env
+!course.env
 !official.env
 !rtfm.env

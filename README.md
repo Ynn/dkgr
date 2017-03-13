@@ -5,6 +5,55 @@ This tools can be used to :
 + 1) Install the environment for an existing grav cloned from a git repository
 + 2) Install a new grav from the grav master repository
 
+## Try :
+
+Retrieve the skeleton from grav web site :
+```bash
+cd skeleton;
+./get-skel course-hub
+```
+
+Show the current configuration of course.env sample
+```bash
+cat config/course.env
+```
+
+Here is the sample file (course.env)
+```markup
+### SAMPLE FILE
+
+# Where from the original grav should be taken
+# You have to choose between a directory or git
+# Git takes precedence over zip file
+
+GRAV_ZIP="./skeleton/course-hub.zip"
+
+# Where to commit the grav system :
+GRAV_SYSTEM_REPOSITORY=""
+
+# Where to commit the page (git submodule of system)
+GRAV_PAGE_REPOSITORY=""
+
+# Default port to expose :
+HTTP_PORT=8085
+
+VIRTUAL_HOST=course.localhost, course.example.com
+```
+
+Install course :
+
+```bash
+./install.sh course
+```
+
+Create a new user :
+
+```bash
+ ./grav-admin/plugin course login newuser -u guest -e guest@example.org -P b -N "Guest" -p 'Passw0rd'
+ ```
+
+Go to http://localhost:8085/ or log to http://localhost:8085/admin
+
 
 ## Configuration and file description
 
