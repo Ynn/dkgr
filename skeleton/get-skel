@@ -1,0 +1,5 @@
+#!/bin/bash
+URL="$(wget -q -O - https://getgrav.org/downloads/skeletons | grep -o '<a .*href=.*>' | sed -e 's/<a/\n<a/g' | sed -e 's/<a .*href=['"'"'"]//' -e 's/["'"'"'].*$//' -e '/^$/ d' |grep https  |grep download |grep $1)"
+read -p "download from $URL ? (Press a key or CTRL+C)"
+(cd tmp && wget -c $URL)
+(cd tmp && unzip *)
