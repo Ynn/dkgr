@@ -1,0 +1,6 @@
+www/*
+!www/README
+cache/*
+!cache/.gitkeep
+skeleton/*
+!skeleton/.gitkeep

@@ -1,0 +1,5 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+(cd $DIR && sudo docker network create www)
+(cd $DIR && sudo docker-compose -p np down)
+(cd $DIR && sudo docker-compose -p np up -d)

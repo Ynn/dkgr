@@ -1,0 +1,53 @@
+#!/bin/bash
+
+usage() { echo "Usage: $0 [-s <45|90>] [-p <string>]" 1>&2; exit 1; }
+
+while getopts ":i:ap:hm:" o; do
+    case "${o}" in
+        i)
+          DOCKERNAME=${OPTARG}
+          ;;
+        a)
+          echo "S!"
+          s="test"
+            ;;
+        p)
+            p=${OPTARG}
+            ;;
+
+        m)
+           message=${OPTARG}
+           ;;
+        h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+
+DOCKERNAME=${DOCKERNAME:-"default"}
+ENV_FILE=./config/$DOCKERNAME.env
+if [[ ! -f "$ENV_FILE" ]]; then
+    echo "Environment file $ENV_FILE not found"
+    echo "Please provide a valid env file name"
+    echo "For instance : "
+    echo "    install.sh grav : will use the file config/grav.env"
+    echo "    install.sh : will use the file config/default.env"
+    exit 0
+fi
+source $ENV_FILE
+
+LOCAL_USER_ID="$(id -u $USER)"
+
+echo $DOCKERNAME
+(cd ./www/$DOCKERNAME && git add .)
+message=${message:-"commit"}
+(cd ./www/$DOCKERNAME && git commit -m "$message")
+(cd ./www/$DOCKERNAME && git pull)
+(cd ./www/$DOCKERNAME && git add .)
+(cd ./www/$DOCKERNAME && git commit -m "$message -- [after merge]")
+(cd ./www/$DOCKERNAME && git push origin master)

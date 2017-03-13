@@ -1,0 +1,15 @@
+#!/bin/sh
+
+echo "This script is meant to be use after install.sh"
+echo "when you use the grav repository as main repository"
+read -p "i know what i am doing (press a key) ..."
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+usage="$(basename "$0") -- call gpm on the given docker compose name"
+DOCKERNAME=$1
+CMD="/www/$DOCKERNAME/bin/grav install"
+ARGS="${@:2}"
+(cd $DIR && ./exec $1 $CMD)
+
+echo "You can now use the gpm.sh script to install new plugins and themes"
+echo "www/gpm.sh install admin is recommanded for instance"

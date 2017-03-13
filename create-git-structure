@@ -1,0 +1,29 @@
+#!/bin/bash
+DOCKERNAME=${1:-"default"}
+ENV_FILE=./config/$DOCKERNAME.env
+if [[ ! -f "$ENV_FILE" ]]; then
+    echo "Environment file $ENV_FILE not found"
+    echo "Please provide a valid env file name"
+    echo "For instance : "
+    echo "    install.sh grav : will use the file config/grav.env"
+    echo "    install.sh : will use the file config/default.env"
+    exit 0
+fi
+source $ENV_FILE
+
+LOCAL_USER_ID="$(id -u $USER)"
+
+
+if [ ! -z "$GRAV_SYSTEM_REPOSITORY" ]; then
+  echo checks "./www/$DOCKERNAME/.git" exists
+  if [[ ! -d "./www/$DOCKERNAME/.git" ]]; then
+    echo "create a git structure"
+    (cd ./www/$DOCKERNAME && git init)
+    (cd ./www/$DOCKERNAME && git remote add origin  $GRAV_SYSTEM_REPOSITORY)
+  else
+    echo "change git origin url"
+    (cd ./www/$DOCKERNAME && git remote set-url origin $GRAV_SYSTEM_REPOSITORY)
+  fi;
+else
+  echo "no system git repository"
+fi

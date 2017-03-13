@@ -1,0 +1,14 @@
+version: "2"
+services :
+  proxy:
+      restart: on-failure:5
+      image: jwilder/nginx-proxy
+      ports :
+        - 80:80
+      volumes:
+          - /var/run/docker.sock:/tmp/docker.sock:ro
+      networks:
+        - www
+networks:
+  www:
+    external: true
