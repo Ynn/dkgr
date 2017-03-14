@@ -17,7 +17,7 @@ NAME="$1_php_1";
 
 # Checks the given docker is running
 if [ "$(sudo docker ps -f name=$NAME|wc -l)" -lt 2 ]; then
-    echo "no running container for given name \"$1\" (more precisely no \"$NAME\" container)"
+    echo "no running container for given name \"$1\" (more precisely no \"${NAME}\" container)"
     echo "arguments provided : $*"
     echo $usage;
     exit 1
@@ -25,5 +25,5 @@ fi
 
 ARGS=${@:3}
 USER=$2
-echo "$USER@$NAME\$> $ARGS"
-sudo docker exec -it $NAME /bin/sh -c "(cd /www/$DOCKERNAME/ && su-exec $USER $ARGS)"
+echo "${USER}@${NAME}\$> ${ARGS}"
+sudo docker exec -it $NAME /bin/sh -c "(cd /www/$DOCKERNAME/ && su-exec ${USER} ${ARGS})"

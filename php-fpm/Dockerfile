@@ -4,6 +4,8 @@ RUN apk --update add \
         bash \
         sed \
         su-exec\
+        openssh-client \
+        git \
         php7 \
         php7-bcmath \
         php7-dom \

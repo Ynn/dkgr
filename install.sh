@@ -38,7 +38,6 @@ function summary {
   echo '-------------------------------------------'
 }
 
-
 echo
 echo
 echo "This script is meant to be executed as a normal user (non root)"
@@ -48,40 +47,11 @@ echo "It will configure LOCAL_USER_ID to your USER ID (current user has $(id -u 
 echo
 summary;
 
-read -p "Is this configuration OK ? Press a key to continue or CTRL+C to abort ..."
-
-
 DOCKERNAME="$GRAV_INSTANCE_NAME"
 NGINXNAME="$DOCKERNAME"_web_1
+mkdir ./www/$DOCKERNAME
 
-if [[ ! -d "./www/$DOCKERNAME" ]]; then
-  #If GRAV_GIT IS NOT SET then
-  if [ -z "$GRAV_GIT" ]; then
-    # Print from GRAV_ZIP
-    echo "Extract grav skeleton from : " $GRAV_ZIP
-    if [[ ! $GRAV_ZIP =~ \.zip$ ]]; then
-      echo "Invalid zip files";
-      exit 0;
-    fi
-    unzip $GRAV_ZIP -d ./www/$DOCKERNAME
-  else
-    # Otherwise print GRAV_GIT
-    echo "Grav system is cloned from : " $GRAV_GIT
-    git clone $GRAV_GIT ./www/$DOCKERNAME
-  fi
-else
-  echo "TARGET DIRECTORY ALREADY EXIST (SKIPPING DOWNLOAD)"
-
-fi
-
-
-mkdir -p ./www/$DOCKERNAME/logs
-mkdir -p ./www/$DOCKERNAME/images
-mkdir -p ./www/$DOCKERNAME/assets
-mkdir -p ./www/$DOCKERNAME/user/data
-
-
-read -p "grav has been downloaded (press a key) ..."
+read -p "Is this configuration OK ? Press a key to continue or CTRL+C to abort ..."
 
 
 export HTTP_PORT;
@@ -115,6 +85,9 @@ if [ ! -z "$LOCAL_USER_ID" ]; then
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi;
 
+cat ./cache/$DOCKERNAME.yml |sed -e "s|#WWW_VOLUME#|- ./www/${DOCKERNAME}:/www/${DOCKERNAME}|" > /tmp/$DOCKERNAME.yml
+cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
+
 cat ./cache/$DOCKERNAME.yml
 
 sudo docker network create www
@@ -130,7 +103,38 @@ echo "Will use the following default.conf :"
 sudo docker exec $NGINXNAME /bin/sh -c "(cat /etc/nginx/conf.d/default.conf)"
 sudo docker exec $NGINXNAME /bin/sh -c "/usr/sbin/nginx -s reload"
 
-./grav-admin/permissions-fixing $DOCKERNAME
+
+
+echo "Will retrieve grav from given location (PRESS A KEY or CTRL+C)"
+
+
+if [[ ! "$(ls -A ./www/$DOCKERNAME)" ]]; then
+  #If GRAV_GIT IS NOT SET then
+  if [ -z "$GRAV_GIT" ]; then
+    # Print from GRAV_ZIP
+    echo "Extract grav skeleton from : " $GRAV_ZIP
+    if [[ ! $GRAV_ZIP =~ \.zip$ ]]; then
+      echo "Invalid zip files";
+      exit 0;
+    fi
+    unzip $GRAV_ZIP -d ./www/$DOCKERNAME
+  else
+    # Otherwise print GRAV_GIT
+    echo "Grav system is cloned from : " $GRAV_GIT
+    ./bin/git $DOCKERNAME clone $GRAV_GIT '.'
+  fi
+else
+  echo "THE TARGET DIRECTORY IS NOT EMPTY (SKIPPING DOWNLOAD)"
+fi
+
+mkdir -p ./www/$DOCKERNAME/logs
+mkdir -p ./www/$DOCKERNAME/images
+mkdir -p ./www/$DOCKERNAME/assets
+mkdir -p ./www/$DOCKERNAME/user/data
+
+read -p "grav has been downloaded (press a key) ..."
+
+./bin/permissions-fixing "$DOCKERNAME"
 
 summary;
 

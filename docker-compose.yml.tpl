@@ -29,7 +29,8 @@ services:
       - DEBUG=0
       #LOCAL_USER_ID#
     volumes:
-      - ./www:/www
+      #WWW_VOLUME#
+      - .ssh:/home/www/.ssh
     networks:
       - www
 networks:

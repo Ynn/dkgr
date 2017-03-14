@@ -2,7 +2,8 @@
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 usage="$(basename "$0") -- call exec on the given docker compose name. User is www"
 DOCKERNAME=$1
-CMD="/www/$DOCKERNAME/bin/gpm"
+
 ARGS="${@:3}"
 CMD=$2
+
 (cd $DIR && ./exec-as $1 www $CMD $ARGS)

@@ -9,7 +9,6 @@ if [ $# -ne 1 ]; then
   exit 1
 fi
 DOCKER_NAME=$1
-ARGS="${@:3}"
 
 CMD="chown -R www /www/$DOCKERNAME"
 (cd $DIR && ./exec-as $DOCKER_NAME root $CMD)

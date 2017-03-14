@@ -1,0 +1,18 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+usage="$(basename "$0") -- call gpm on the given docker compose name"
+DOCKERNAME=$1
+CMD="git"
+
+ARGS=''
+for i in "${@:2}"; do
+    case "$i" in
+        *\'*)
+            i=`printf "%s" "$i" | sed "s/'/'\"'\"'/g"`
+            ;;
+        *) : ;;
+    esac
+    ARGS="$ARGS '$i'"
+done
+
+(cd $DIR && ./exec "$1" "$CMD" "$ARGS")

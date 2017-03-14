@@ -3,5 +3,16 @@ DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 usage="$(basename "$0") -- call /bin/bash on the given docker compose name"
 CMD="/bin/bash"
 DOCKERNAME=$1
-ARGS="${@:2}"
+
+ARGS=''
+for i in "${@:2}"; do
+    case "$i" in
+        *\'*)
+            i=`printf "%s" "$i" | sed "s/'/'\"'\"'/g"`
+            ;;
+        *) : ;;
+    esac
+    ARGS="$ARGS '$i'"
+done
+
 (cd $DIR && ./exec $DOCKERNAME $CMD $ARGS)
