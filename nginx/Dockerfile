@@ -11,6 +11,7 @@ RUN sed -i \
 
 RUN rm -Rf /etc/nginx/conf.d/default.conf
 COPY default.conf /etc/nginx/conf.d/default.conf
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 

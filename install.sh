@@ -12,6 +12,8 @@ fi
 source $ENV_FILE
 
 LOCAL_USER_ID="$(id -u $USER)"
+GIT_USER=${GIT_USER:-$USER}
+GIT_MAIL=${GIT_MAIL:-$USER'@example.com'}
 
 VIRTUAL_HOST=${VIRTUAL_HOST:-"$GRAV_INSTANCE_NAME".localhost}
 
@@ -34,6 +36,8 @@ function summary {
   echo "Grav System will be commited in : " $GRAV_SYSTEM_REPOSITORY
   echo "Grav pages will be commited in : " $GRAV_PAGE_REPOSITORY
   echo "EXPOSED HTTP PORT: " $HTTP_PORT
+  echo "GIT USER NAME : "$GIT_USER
+  echo "GIT USER MAIL : "$GIT_MAIL
 
   echo '-------------------------------------------'
 }
@@ -104,8 +108,11 @@ sudo docker exec $NGINXNAME /bin/sh -c "(cat /etc/nginx/conf.d/default.conf)"
 sudo docker exec $NGINXNAME /bin/sh -c "/usr/sbin/nginx -s reload"
 
 
-
 echo "Will retrieve grav from given location (PRESS A KEY or CTRL+C)"
+
+# SET GIT USER NAME AND MAIL :
+./bin/git $DOCKERNAME config --global user.email "${GIT_MAIL}"
+./bin/git $DOCKERNAME config --global user.name "${GIT_USER}"
 
 
 if [[ ! "$(ls -A ./www/$DOCKERNAME)" ]]; then
@@ -122,12 +129,6 @@ if [[ ! "$(ls -A ./www/$DOCKERNAME)" ]]; then
     # Otherwise print GRAV_GIT
     echo "Grav system is cloned from : " $GRAV_GIT
     ./bin/git $DOCKERNAME clone $GRAV_GIT '.'
-
-    if [ ! -z "$GIT_USER" ]; then
-      ./bin/git $DOCKERNAME config --global user.email "${GIT_MAIL}"
-      ./bin/git $DOCKERNAME config --global user.name "${GIT_USER}"
-    fi
-
   fi
 else
   echo "THE TARGET DIRECTORY IS NOT EMPTY (SKIPPING DOWNLOAD)"
@@ -142,7 +143,14 @@ read -p "grav has been downloaded (press a key) ..."
 
 ./bin/permissions-fixing "$DOCKERNAME"
 
+
+GIT_PULL_SCRIPT_NAME="${DOCKERNAME}"'_pull.php'
+cp ./nginx/pull.php "./www/${DOCKERNAME}/${GIT_PULL_SCRIPT_NAME}"
+sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" ./www/${DOCKERNAME}/${GIT_PULL_SCRIPT_NAME})"
+echo "pull request can be send to http://host:$HTTP_PORT/$GIT_PULL_SCRIPT_NAME"
+
 summary;
+
 
 echo "Grav is supposed to be accessible on http://localhost:$HTTP_PORT/ (unless you changed the port)"
 echo "If this is a new install (grav has been downloaded from official repo), you have to run grav-admin/grav $NGINXNAME install"
