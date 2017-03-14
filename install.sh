@@ -122,6 +122,12 @@ if [[ ! "$(ls -A ./www/$DOCKERNAME)" ]]; then
     # Otherwise print GRAV_GIT
     echo "Grav system is cloned from : " $GRAV_GIT
     ./bin/git $DOCKERNAME clone $GRAV_GIT '.'
+
+    if [ ! -z "$GIT_USER" ]; then
+      ./bin/git $DOCKERNAME config --global user.email "${GIT_MAIL}"
+      ./bin/git $DOCKERNAME config --global user.name "${GIT_USER}"
+    fi
+
   fi
 else
   echo "THE TARGET DIRECTORY IS NOT EMPTY (SKIPPING DOWNLOAD)"
