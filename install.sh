@@ -16,6 +16,7 @@ GIT_USER=${GIT_USER:-$USER}
 GIT_MAIL=${GIT_MAIL:-$USER'@example.com'}
 
 VIRTUAL_HOST=${VIRTUAL_HOST:-"$GRAV_INSTANCE_NAME".localhost}
+GRAV_SYSTEM_REPOSITORY=${GRAV_SYSTEM_REPOSITORY:-$GRAV_GIT}
 
 function summary {
   echo '----------- SUMMARY -----------------------'
@@ -134,6 +135,22 @@ else
   echo "THE TARGET DIRECTORY IS NOT EMPTY (SKIPPING DOWNLOAD)"
 fi
 
+if [ ! -z "$GRAV_SYSTEM_REPOSITORY" ]; then
+  echo checks "./www/$DOCKERNAME/.git" exists
+  if [[ ! -d "./www/$DOCKERNAME/.git" ]]; then
+    echo "create a git structure"
+    cp ./nginx/grav_gitignore ./www/$DOCKERNAME/.gitignore
+    (cd ./www/$DOCKERNAME && git init)
+    (cd ./www/$DOCKERNAME && git remote add origin  $GRAV_SYSTEM_REPOSITORY)
+  else
+    echo "change git origin url"
+    (cd ./www/$DOCKERNAME && git remote set-url origin $GRAV_SYSTEM_REPOSITORY)
+  fi;
+else
+  echo "no system git repository"
+fi
+
+
 mkdir -p ./www/$DOCKERNAME/logs
 mkdir -p ./www/$DOCKERNAME/images
 mkdir -p ./www/$DOCKERNAME/assets
@@ -144,10 +161,15 @@ read -p "grav has been downloaded (press a key) ..."
 ./bin/permissions-fixing "$DOCKERNAME"
 
 
-GIT_PULL_SCRIPT_NAME="${DOCKERNAME}"'_pull.php'
-cp ./nginx/pull.php "./www/${DOCKERNAME}/${GIT_PULL_SCRIPT_NAME}"
-sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" ./www/${DOCKERNAME}/${GIT_PULL_SCRIPT_NAME})"
-echo "pull request can be send to http://host:$HTTP_PORT/$GIT_PULL_SCRIPT_NAME"
+### SET GIT PULL SCRIPT WITH THE PROPER NAME INTO THE PULL DIRECTORY OF THE GRAV INSTALL
+
+GIT_PULL_SCRIPT_NAME=${GIT_PULL_SCRIPT_NAME:-"${DOCKERNAME}"'_pull.php'}
+cp -R ./nginx/pull "./www/${DOCKERNAME}/"
+mv ./www/${DOCKERNAME}/pull/pull.php ./www/${DOCKERNAME}/pull/${GIT_PULL_SCRIPT_NAME}
+mv ./www/${DOCKERNAME}/pull/gitignore ./www/${DOCKERNAME}/pull/.gitignore
+
+sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" ./www/${DOCKERNAME}/pull/${GIT_PULL_SCRIPT_NAME})"
+echo "pull request can be send to http://host:$HTTP_PORT/pull/$GIT_PULL_SCRIPT_NAME"
 
 summary;
 

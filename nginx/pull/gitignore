@@ -1,0 +1,5 @@
+#GITIGNORE TO USE FOR PULL SCRIPT
+# Ignore everything in this directory
+*
+# Except this file
+!.gitignore
