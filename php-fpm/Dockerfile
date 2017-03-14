@@ -1,46 +1,50 @@
-FROM phusion/baseimage:0.9.19
+FROM alpine:3.5
 
-RUN apt-get update && apt-get -y --no-install-recommends install \
-    ca-certificates \
-    curl
+RUN apk --update add \
+        bash \
+        sed \
+        su-exec\
+        php7 \
+        php7-bcmath \
+        php7-dom \
+        php7-ctype \
+        php7-curl \
+        php7-fpm \
+        php7-gd \
+        php7-iconv \
+        php7-intl \
+        php7-json \
+        php7-mbstring \
+        php7-mcrypt \
+        php7-mysqlnd \
+        php7-opcache \
+        php7-openssl \
+        php7-pdo \
+        php7-pdo_mysql \
+        php7-pdo_pgsql \
+        php7-pdo_sqlite \
+        php7-phar \
+        php7-posix \
+        php7-session \
+        php7-soap \
+        php7-xml \
+        php7-zip \
+    && rm -rf /var/cache/apk/*
 
-RUN gpg --keyserver ha.pool.sks-keyservers.net --recv-keys B42F6819007F00F88E364FD4036A9C25BF357DD4
-RUN curl -o /usr/local/bin/gosu -SL "https://github.com/tianon/gosu/releases/download/1.4/gosu-$(dpkg --print-architecture)" \
-    && curl -o /usr/local/bin/gosu.asc -SL "https://github.com/tianon/gosu/releases/download/1.4/gosu-$(dpkg --print-architecture).asc" \
-    && gpg --verify /usr/local/bin/gosu.asc \
-    && rm /usr/local/bin/gosu.asc \
-    && chmod +x /usr/local/bin/gosu
+RUN ln -s /usr/bin/php7 /usr/bin/php
 
-#Install core packages
-RUN apt-get update -q
-RUN apt-get upgrade -y -q
-RUN apt-get install -y -q php php-cli php-fpm php-gd php-curl php-apcu php-xml php-mbstring php-zip ca-certificates git-core
-RUN apt-get clean -q && rm -rf /var/lib/apt/lists/* /tmp/* /var/tmp/*
+EXPOSE 9000
 
 RUN sed -i \
-        -e 's|listen = /run/php/php7.0-fpm.sock|listen = 9000|' \
-        -e 's|user = www-data|user = www|' \
-        -e 's|group = www-data|group = www|' \
-       -e 's|listen.owner = www-data|listen.owner = www|' \
-       -e 's|listen.group = www-data|listen.group = www|' \
-   /etc/php/7.0/fpm/pool.d/www.conf
-RUN cat /etc/php/7.0/fpm/pool.d/www.conf
-
-#Setup Php service
-RUN mkdir -p /run/php/
-RUN touch /run/php/php7.0-fpm.sock
-RUN mkdir -p /etc/service/php-fpm
-RUN touch /etc/service/php-fpm/run
-RUN chmod +x /etc/service/php-fpm/run
-RUN echo '#!/bin/bash \n\
-   exec /usr/sbin/php-fpm7.0 -F' >> /etc/service/php-fpm/run
-
+        -e 's|listen = 127.0.0.1:9000|listen = 9000|' \
+        -e 's|user = nobody|user = www|' \
+        -e 's|group = nobody|group = www|' \
+       -e 's|;listen.owner = nobody|listen.owner = www|' \
+       -e 's|;listen.group = nobody|listen.group = www|' \
+   /etc/php7/php-fpm.d/www.conf && cat /etc/php7/php-fpm.d/www.conf
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["/etc/service/php-fpm/run"]
-
-#Public ports
-EXPOSE 9000
+CMD ["php-fpm7", "-F"]

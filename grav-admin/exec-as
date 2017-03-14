@@ -26,4 +26,4 @@ fi
 ARGS=${@:3}
 USER=$2
 echo "$USER@$NAME\$> $ARGS"
-sudo docker exec -it $NAME /bin/sh -c "(cd /www/$DOCKERNAME/ && /usr/local/bin/gosu $USER $ARGS)"
+sudo docker exec -it $NAME /bin/sh -c "(cd /www/$DOCKERNAME/ && su-exec $USER $ARGS)"

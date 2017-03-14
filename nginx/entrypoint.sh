@@ -7,7 +7,8 @@
 USER_ID=${LOCAL_USER_ID:-9001}
 
 echo "Starting with UID : $USER_ID"
-useradd --shell /bin/bash -u $USER_ID -o -c "" -m www
+addgroup -S www
+adduser -S -s /bin/bash -u $USER_ID -G www www
 export HOME=/home/www
 
-exec /usr/local/bin/gosu root "$@"
+exec su-exec root "$@"
