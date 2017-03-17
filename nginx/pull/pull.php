@@ -3,7 +3,7 @@ date_default_timezone_set('America/Los_Angeles');
 ignore_user_abort(true);
 set_time_limit(0);
 
-$repo          = '/www/#DOCKERNAME#;';
+$repo          = '/www/#DOCKERNAME#';
 $branch        = 'master';
 $output        = array();
 
