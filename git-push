@@ -1,0 +1,27 @@
+#!/bin/bash
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+usage() { echo "Usage: $0 [-n containername]" 1>&2; exit 1; }
+
+while getopts ":n:auhm:" o; do
+    case "${o}" in
+        n)
+          DOCKERNAME=${OPTARG}
+          ;;
+        h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+echo "PUSH "$DOCKERNAME $a $message
+
+if [ -z "$DOCKERNAME" ]; then
+  usage;
+fi;
+
+(cd $DIR && ./bin/git "${DOCKERNAME}" push origin master)
