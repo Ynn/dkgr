@@ -69,7 +69,7 @@ The bin/git command provides a way to call git from the container :
 
 ```bash
 # bin/git <container> [arguments, ...]
-[ynn@capybara dkgr]$ bin/git demo pull
+$ bin/git demo pull
 www@demo_php_1$> git 'pull'
 Already up-to-date.
 ```
