@@ -10,6 +10,7 @@ services:
        #HTTP_PORT#
        #HTTPS_PORT#
     volumes:
+      - .ssh:/home/www/.ssh
       #WWW_VOLUME#
       #SHARED_ACCOUNT_VOLUME#
     environment:

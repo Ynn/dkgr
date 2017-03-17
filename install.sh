@@ -97,6 +97,8 @@ if [ ! -z "$SHARED_ACCOUNTS_GROUP" ]; then
   echo "WILL STORE ACCOUNTS in  ./www/.shared/$SHARED_ACCOUNTS_GROUP/"
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#SHARED_ACCOUNT_VOLUME#|- ./www/.shared/$SHARED_ACCOUNTS_GROUP/:/www/${DOCKERNAME}/user/accounts|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
+#  cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - -p $DOCKERNAME down
+#  cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - -p $DOCKERNAME up -d
 fi
 
 cat ./cache/$DOCKERNAME.yml
@@ -122,7 +124,7 @@ echo "Will retrieve grav from given location (PRESS A KEY or CTRL+C)"
 ./bin/git $DOCKERNAME config --global user.name "${GIT_USER}"
 
 
-if [[ ! "$(ls -A ./www/$DOCKERNAME)" ]]; then
+if [[ ! "$(ls -A ./www/$DOCKERNAME/bin)" ]]; then
   #If GRAV_GIT IS NOT SET then
   if [ -z "$GRAV_GIT" ]; then
     # Print from GRAV_ZIP
@@ -135,7 +137,12 @@ if [[ ! "$(ls -A ./www/$DOCKERNAME)" ]]; then
   else
     # Otherwise print GRAV_GIT
     echo "Grav system is cloned from : " $GRAV_GIT
-    ./bin/git $DOCKERNAME clone $GRAV_GIT '.'
+    (cd ./www/$DOCKERNAME && git init)
+    (cd ./www/$DOCKERNAME && git remote add origin  $GRAV_GIT)
+    #./bin/git $DOCKERNAME clone $GRAV_GIT '.'
+    ./bin/git $DOCKERNAME fetch origin
+    ./bin/permissions-fixing "$DOCKERNAME"
+    ./bin/git $DOCKERNAME reset --hard origin/master
   fi
 else
   echo "THE TARGET DIRECTORY IS NOT EMPTY (SKIPPING DOWNLOAD)"
@@ -165,7 +172,6 @@ mkdir -p ./www/$DOCKERNAME/user/data
 read -p "grav has been downloaded (press a key) ..."
 
 ./bin/permissions-fixing "$DOCKERNAME"
-
 
 ### SET GIT PULL SCRIPT WITH THE PROPER NAME INTO THE PULL DIRECTORY OF THE GRAV INSTALL
 

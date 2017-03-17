@@ -16,7 +16,7 @@ CMD="chown -R www /www/$DOCKERNAME"
 CMD="find /www/$DOCKERNAME -type f | xargs chmod 664"
 (cd $DIR && ./exec-as $DOCKER_NAME root $CMD)
 
-CMD="find /www/$DOCKERNAME/bin -type f | xargs chmod 775"
+CMD="find /www/$DOCKERNAME/bin -type f 2> /dev/null | xargs -r chmod 775"
 (cd $DIR && ./exec-as $DOCKER_NAME root $CMD)
 
 CMD="find /www/$DOCKERNAME -type d | xargs chmod 775"
