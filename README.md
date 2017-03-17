@@ -5,15 +5,17 @@ This tools can be used to :
 + 1) Install the environment for an existing grav cloned from a git repository
 + 2) Install a new grav from the grav master repository
 
-## Try :
+## Quick start
 
-Retrieve the skeleton from grav web site :
+In this section, we will download a skeleton and create a grav from this skeleton.
+
+First, download the skeleton from grav web site :
 ```bash
 cd skeleton;
 ./get-skel course-hub
 ```
 
-Show the current configuration of course.env sample
+A course.env file already exists. You can edit the configuration if you want :
 ```bash
 cat config/course.env
 ```
@@ -40,13 +42,26 @@ HTTP_PORT=8085
 VIRTUAL_HOST=course.localhost, course.example.com
 ```
 
-Install course :
+
+To install the corresponding "course" grav, simply run install.sh (as a normal user) :
 
 ```bash
 ./install.sh course
 ```
 
-Create a new user :
+A www user is created inside the container. Its user id matches the id of the user who called install.sh.
+
+You can then call ./bin/<cmd> to manage your container. The format is always :
+```bash
+./bin/cmd <container_name> [Arguments, ...]
+```
+
+For instance, the following command open a bash shell in /www/grav-folder with the www user.
+```
+./bin/shell course
+```
+
+Gpm, Grav and plugin cli commands have their `./bin` equivalents. For instance, you can run the following command to create a new user :
 
 ```bash
  ./grav-admin/plugin course login newuser -u guest -e guest@example.org -P b -N "Guest" -p 'Passw0rd'
