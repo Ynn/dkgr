@@ -54,6 +54,27 @@ Create a new user :
 
 Go to http://localhost:8085/ or log to http://localhost:8085/admin
 
+## GIT
+
+If you want to use git with ssh, you should add authorized keys in the .ssh directory.
+
+```bash
+# to be run in the dkgr directory :
+ssh-keygen -f ./.ssh/id_rsa
+```
+
+The `.ssh` directory is mapped to /home/www/.ssh directory of all containers.
+
+The bin/git command provides a way to call git from the container :
+
+```bash
+# bin/git <container> [arguments, ...]
+[ynn@capybara dkgr]$ bin/git demo pull
+www@demo_php_1$> git 'pull'
+Already up-to-date.
+```
+
+
 
 ## Configuration and file description
 
