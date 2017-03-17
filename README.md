@@ -64,7 +64,7 @@ For instance, the following command open a bash shell in /www/grav-folder with t
 Gpm, Grav and plugin cli commands have their `./bin` equivalents. For instance, you can run the following command to create a new user :
 
 ```bash
- ./grav-admin/plugin course login newuser -u guest -e guest@example.org -P b -N "Guest" -p 'Passw0rd'
+ ./bin/plugin course login newuser -u guest -e guest@example.org -P b -N "Guest" -p 'Passw0rd'
  ```
 
 Go to http://localhost:8085/ or log to http://localhost:8085/admin

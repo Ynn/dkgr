@@ -45,6 +45,12 @@ RUN sed -i \
        -e 's|;listen.group = nobody|listen.group = www|' \
    /etc/php7/php-fpm.d/www.conf && cat /etc/php7/php-fpm.d/www.conf
 
+# Note that the value could be 0 to disable the limit
+RUN sed -i \
+      -e 's|post_max_size = 8M|post_max_size = 1000M|' \
+      -e 's|upload_max_filesize = 2M|upload_max_filesize = 1000M|' \
+      /etc/php7/php.ini
+
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 

@@ -93,6 +93,12 @@ fi;
 cat ./cache/$DOCKERNAME.yml |sed -e "s|#WWW_VOLUME#|- ./www/${DOCKERNAME}:/www/${DOCKERNAME}|" > /tmp/$DOCKERNAME.yml
 cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 
+if [ ! -z "$SHARED_ACCOUNTS_GROUP" ]; then
+  echo "WILL STORE ACCOUNTS in  ./www/.shared/$SHARED_ACCOUNTS_GROUP/"
+  cat ./cache/$DOCKERNAME.yml |sed -e "s|#SHARED_ACCOUNT_VOLUME#|- ./www/.shared/$SHARED_ACCOUNTS_GROUP/:/www/${DOCKERNAME}/user/accounts|" > /tmp/$DOCKERNAME.yml
+  cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
+fi
+
 cat ./cache/$DOCKERNAME.yml
 
 sudo docker network create www

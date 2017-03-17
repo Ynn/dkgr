@@ -10,7 +10,8 @@ services:
        #HTTP_PORT#
        #HTTPS_PORT#
     volumes:
-      - ./www:/www
+      #WWW_VOLUME#
+      #SHARED_ACCOUNT_VOLUME#
     environment:
       - VIRTUAL_PORT=80
       #VIRTUAL_HOST#
@@ -31,6 +32,7 @@ services:
     volumes:
       #WWW_VOLUME#
       - .ssh:/home/www/.ssh
+      #SHARED_ACCOUNT_VOLUME#
     networks:
       - www
 networks:

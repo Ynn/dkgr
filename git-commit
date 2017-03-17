@@ -1,9 +1,9 @@
 #!/bin/bash
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 
-usage() { echo "Usage: $0 [-n containername] [-a]" 1>&2; exit 1; }
+usage() { echo "Usage: $0 [-n containername] [-a for all] [-u for user dir] [-p to force accounts commit]" 1>&2; exit 1; }
 
-while getopts ":n:auhm:" o; do
+while getopts ":n:auphm:" o; do
     case "${o}" in
         n)
           DOCKERNAME=${OPTARG}
@@ -17,6 +17,9 @@ while getopts ":n:auhm:" o; do
         m)
            MESSAGE=${OPTARG}
            ;;
+       p)
+          COMMIT_ACCOUNTS=1
+          ;;
         h)
             usage
             ;;
@@ -42,6 +45,10 @@ if [ -z "$COMMIT_ALL" ]; then
 else
   (cd $DIR && ./bin/git "${DOCKERNAME}" add .)
 fi;
+
+if [ ! -z "$COMMIT_ACCOUNTS" ]; then
+  (cd $DIR && ./bin/git "${DOCKERNAME}" add -f user/accounts/*)
+fi
 
 MESSAGE=${MESSAGE:-"Commit from "$USER}
 
