@@ -9,7 +9,7 @@ $output        = array();
 
 // update github Repo
 $output[] = date('Y-m-d, H:i:s', time()) . "\n";
-$output[] = "GitHub Pull\n============================\n" . shell_exec('cd '.$repo.' && git fetch origin && git reset --hard origin/master'.$branch.' 2>&1');
+$output[] = "GitHub Pull\n============================\n" . shell_exec('cd '.$repo.' && git fetch origin && git reset --hard origin/'.$branch.' 2>&1');
 
 // redirect output to logs
 file_put_contents(rtrim(getcwd(), '/').'/___github-log.txt', implode("\n", $output) . "\n----------------------------\n", FILE_APPEND);
