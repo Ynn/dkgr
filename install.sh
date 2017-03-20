@@ -157,7 +157,7 @@ if [[ ! -d "./www/$DOCKERNAME/bin" ]]; then
       echo "Invalid zip files";
       exit 0;
     fi
-    unzip $GRAV_ZIP -d ./www/$DOCKERNAME
+    sudo unzip $GRAV_ZIP -d ./www/$DOCKERNAME
   else
     # Otherwise print GRAV_GIT
     echo "Grav system is cloned from : " $GRAV_GIT
