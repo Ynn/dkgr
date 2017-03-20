@@ -114,7 +114,7 @@ if [[ ! -z "$LETSENCRYPT_HOST" ]]; then
 fi;
 
 if [[ ! -z "$LETSENCRYPT_EMAIL" ]]; then
-  cat ./cache/$DOCKERNAME.yml |sed -e "s|#LETSENCRYPT_HOST#|- LETSENCRYPT_HOST=${LETSENCRYPT_EMAIL}|" > /tmp/$DOCKERNAME.yml
+  cat ./cache/$DOCKERNAME.yml |sed -e "s|#LETSENCRYPT_EMAIL#|- LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi;
 
