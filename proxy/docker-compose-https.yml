@@ -1,0 +1,29 @@
+version: "2"
+services :
+  proxy:
+      restart: on-failure:5
+      image: jwilder/nginx-proxy:alpine
+      ports :
+        - 80:80
+      volumes:
+          - /var/run/docker.sock:/tmp/docker.sock:ro
+          - ./encrypt/vhosts:/etc/nginx/vhost.d
+          - ./encrypt/certs:/etc/nginx/certs
+          - ./encrypt/html:/usr/share/nginx/html
+      networks:
+        - www
+
+  letsencrypt:
+      restart: on-failure:5
+      image: jrcs/letsencrypt-nginx-proxy-companion
+      volumes_from:
+          - proxy
+      volumes:
+          - /var/run/docker.sock:/var/run/docker.sock:ro
+          - ./encrypt/certs:/etc/nginx/certs:rw
+      networks:
+          - www
+
+networks:
+  www:
+    external: true

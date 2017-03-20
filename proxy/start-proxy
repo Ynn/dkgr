@@ -1,5 +1,25 @@
 #!/bin/bash
+
+usage() { echo "Usage: $0 [-s to run https]" 1>&2; exit 1; }
+
+while getopts "s" o; do
+    case "${o}" in
+        s)
+          COMPOSE_FILE="docker-compose-https.yml"
+          ;;
+        h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+COMPOSE_FILE=${COMPOSE_FILE:-"docker-compose.yml"}
+
+
 DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
 (cd $DIR && sudo docker network create www)
-(cd $DIR && sudo docker-compose -p np down)
-(cd $DIR && sudo docker-compose -p np up -d)
+(cd $DIR && sudo docker-compose -f $COMPOSE_FILE -p np down)
+(cd $DIR && sudo docker-compose -f $COMPOSE_FILE -p np up -d)
