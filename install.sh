@@ -35,11 +35,10 @@ function summary {
 
   echo "VIRTUAL_HOST are : " $VIRTUAL_HOST
   echo "Grav System will be commited in : " $GRAV_SYSTEM_REPOSITORY
-  echo "Grav pages will be commited in : " $GRAV_PAGE_REPOSITORY
+  echo "Grav accounts shared directory : " /www/.shared/$SHARED_ACCOUNTS_GROUP
   echo "EXPOSED HTTP PORT: " $HTTP_PORT
   echo "GIT USER NAME : "$GIT_USER
   echo "GIT USER MAIL : "$GIT_MAIL
-
   echo '-------------------------------------------'
 }
 

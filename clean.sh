@@ -30,4 +30,4 @@ export LOCAL_USER_ID;
 
 read -p  "This will destroy your grav install ! CTRL+C to abort."
 sudo docker-compose -f docker-compose.yml.tpl -p $DOCKERNAME down
-sudo rm -Rif ./www/$DOCKERNAME
+sudo rm -Rvf ./www/$DOCKERNAME

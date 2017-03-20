@@ -1,0 +1,60 @@
+#!/bin/bash
+
+echo "TO BE DONE"
+exit 0
+
+
+DIR="$( cd "$( dirname "${BASH_SOURCE[0]}" )" && pwd )"
+
+usage() { echo "Usage: $0 [-n containername] [-a for all] [-u for user dir] [-p to force accounts commit]" 1>&2; exit 1; }
+
+while getopts ":n:auphm:" o; do
+    case "${o}" in
+        n)
+          DOCKERNAME=${OPTARG}
+          ;;
+        a)
+          COMMIT_ALL=1
+            ;;
+        u)
+          COMMIT_USER=1
+            ;;
+        m)
+           MESSAGE=${OPTARG}
+           ;;
+       p)
+          COMMIT_ACCOUNTS=1
+          ;;
+        h)
+            usage
+            ;;
+        *)
+            usage
+            ;;
+    esac
+done
+shift $((OPTIND-1))
+
+echo "PUSH "$DOCKERNAME $a $message
+
+if [ -z "$DOCKERNAME" ]; then
+  usage;
+fi;
+
+if [ -z "$COMMIT_ALL" ]; then
+  if [ -z "$COMMIT_USER" ]; then
+    (cd $DIR && ./bin/git "${DOCKERNAME}" add user/pages/*)
+  else
+    (cd $DIR && ./bin/git "${DOCKERNAME}" add user/*)
+  fi;
+else
+  (cd $DIR && ./bin/git "${DOCKERNAME}" add .)
+fi;
+
+if [ ! -z "$COMMIT_ACCOUNTS" ]; then
+  (cd $DIR && ./bin/git "${DOCKERNAME}" add -f user/accounts/*)
+fi
+
+MESSAGE=${MESSAGE:-"Commit from "$USER}
+
+(cd $DIR && ./bin/git "${DOCKERNAME}" commit -m "${MESSAGE}")
