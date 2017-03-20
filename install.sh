@@ -40,6 +40,11 @@ function summary {
   echo "GIT USER NAME : "$GIT_USER
   echo "GIT USER MAIL : "$GIT_MAIL
   echo "PULL ADDRESS : http://<vhost>.<hostname>/pull/${GIT_PULL_SCRIPT_NAME}"
+
+  if [[ ! -z "$HTPASSWD_NAME" ]]; then
+      echo "htpasswd file : "./www/.htpasswd/$HTPASSWD_NAME
+  fi
+
   echo '-------------------------------------------'
 }
 
@@ -90,6 +95,13 @@ if [ ! -z "$LOCAL_USER_ID" ]; then
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi;
 
+if [ ! -z "$HTPASSWD_NAME" ]; then
+  touch ./www/.htpasswd/${HTPASSWD_NAME}
+  cat ./cache/$DOCKERNAME.yml |sed -e "s|#HTPASSWD#|- ./www/.htpasswd/${HTPASSWD_NAME}:/www/.htpasswd|" > /tmp/$DOCKERNAME.yml
+  cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
+fi;
+
+
 cat ./cache/$DOCKERNAME.yml |sed -e "s|#WWW_VOLUME#|- ./www/${DOCKERNAME}:/www/${DOCKERNAME}|" > /tmp/$DOCKERNAME.yml
 cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 
@@ -111,6 +123,15 @@ cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - -p $DOCKERNAME up -d
 
 read -p "ready to configure NGINX ... change the default.conf root is to /www/$DOCKERNAME (PRESS A KEY OR CTRL+C TO ABORT)"
 sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" /etc/nginx/conf.d/default.conf)"
+
+if [ ! -z "$HTPASSWD_NAME" ]; then
+  sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#AUTH_BASIC#|auth_basic|\" /etc/nginx/conf.d/default.conf)"
+  #sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#AUTH_BASIC#|auth_basic|\" /etc/nginx/conf.d/default.conf)"
+  sudo docker exec $NGINXNAME /bin/sh -c "(cat /etc/nginx/conf.d/default.conf)"
+fi;
+
+
+
 
 echo "Will use the following default.conf :"
 sudo docker exec $NGINXNAME /bin/sh -c "(cat /etc/nginx/conf.d/default.conf)"

@@ -12,6 +12,7 @@ services:
     volumes:
       - .ssh:/home/www/.ssh
       #WWW_VOLUME#
+      #HTPASSWD#
       #SHARED_ACCOUNT_VOLUME#
     environment:
       - VIRTUAL_PORT=80
