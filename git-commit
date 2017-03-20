@@ -30,8 +30,6 @@ while getopts ":n:auphm:" o; do
 done
 shift $((OPTIND-1))
 
-echo "PUSH "$DOCKERNAME $a $message
-
 if [ -z "$DOCKERNAME" ]; then
   usage;
 fi;

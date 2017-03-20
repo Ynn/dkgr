@@ -39,6 +39,7 @@ function summary {
   echo "EXPOSED HTTP PORT: " $HTTP_PORT
   echo "GIT USER NAME : "$GIT_USER
   echo "GIT USER MAIL : "$GIT_MAIL
+  echo "PULL ADDRESS : http://<vhost>.<hostname>/pull/${GIT_PULL_SCRIPT_NAME}"
   echo '-------------------------------------------'
 }
 
@@ -53,7 +54,7 @@ summary;
 
 DOCKERNAME="$GRAV_INSTANCE_NAME"
 NGINXNAME="$DOCKERNAME"_web_1
-mkdir ./www/$DOCKERNAME
+mkdir ./www/$DOCKERNAME 2> /dev/null
 
 read -p "Is this configuration OK ? Press a key to continue or CTRL+C to abort ..."
 
@@ -123,7 +124,8 @@ echo "Will retrieve grav from given location (PRESS A KEY or CTRL+C)"
 ./bin/git $DOCKERNAME config --global user.name "${GIT_USER}"
 
 
-if [[ ! "$(ls -A ./www/$DOCKERNAME/bin)" ]]; then
+#if [[ ! "$(ls -A ./www/$DOCKERNAME/bin)" ]]; then
+if [[ ! -d "./www/$DOCKERNAME/bin" ]]; then
   #If GRAV_GIT IS NOT SET then
   if [ -z "$GRAV_GIT" ]; then
     # Print from GRAV_ZIP

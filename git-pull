@@ -22,4 +22,4 @@ if [ -z "$DOCKERNAME" ]; then
   usage;
 fi;
 
-(cd $DIR && ./bin/git "${DOCKERNAME}" push origin master)
+(cd $DIR && ./bin/git "${DOCKERNAME}" pull origin master)
