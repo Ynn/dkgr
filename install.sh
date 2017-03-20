@@ -50,6 +50,14 @@ function summary {
       echo "htpasswd file : "./www/.htpasswd/$HTPASSWD_NAME
   fi
 
+  if [[ ! -z "$LETSENCRYPT_HOST" ]]; then
+    echo "LETSENCRYPT_HOST=${LETSENCRYPT_HOST}"
+  fi;
+
+  if [[ ! -z "$LETSENCRYPT_EMAIL" ]]; then
+    echo "LETSENCRYPT_EMAIL=${LETSENCRYPT_EMAIL}"
+  fi;
+
   echo '-------------------------------------------'
 }
 
@@ -99,6 +107,17 @@ if [[ ! -z "$LOCAL_USER_ID" ]]; then
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#LOCAL_USER_ID#|- LOCAL_USER_ID=${LOCAL_USER_ID}|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi;
+
+if [[ ! -z "$LETSENCRYPT_HOST" ]]; then
+  cat ./cache/$DOCKERNAME.yml |sed -e "s|#LETSENCRYPT_HOST#|- LETSENCRYPT_HOST=${LETSENCRYPT_HOST}|" > /tmp/$DOCKERNAME.yml
+  cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
+fi;
+
+if [[ ! -z "$LETSENCRYPT_EMAIL" ]]; then
+  cat ./cache/$DOCKERNAME.yml |sed -e "s|#LETSENCRYPT_HOST#|- LETSENCRYPT_HOST=${LETSENCRYPT_EMAIL}|" > /tmp/$DOCKERNAME.yml
+  cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
+fi;
+
 
 if [[ ! -z "$HTPASSWD_NAME" ]]; then
   touch ./www/.htpasswd/${HTPASSWD_NAME}

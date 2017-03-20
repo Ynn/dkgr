@@ -16,6 +16,8 @@ services:
       #SHARED_ACCOUNT_VOLUME#
     environment:
       - VIRTUAL_PORT=80
+      #LETSENCRYPT_HOST#
+      #LETSENCRYPT_EMAIL#
       #VIRTUAL_HOST#
       #LOCAL_USER_ID#
     links:
