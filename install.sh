@@ -18,6 +18,11 @@ GIT_MAIL=${GIT_MAIL:-$USER'@example.com'}
 VIRTUAL_HOST=${VIRTUAL_HOST:-"$GRAV_INSTANCE_NAME".localhost}
 GRAV_SYSTEM_REPOSITORY=${GRAV_SYSTEM_REPOSITORY:-$GRAV_GIT}
 
+# This script might not work well on OSX : (just replace the command by a random string)
+#GIT_PULL_DIRECTORY_NAME=${GIT_PULL_DIRECTORY_NAME:-"$(cat /dev/urandom | env LC_CTYPE=C tr -cd 'a-f0-9' | head -c 32)"}
+GIT_PULL_SCRIPT_NAME=${GIT_PULL_DIRECTORY_NAME:-"${DOCKERNAME}"'_pull'}
+
+
 function summary {
   echo '----------- SUMMARY -----------------------'
   echo 'CONFIGURATION FILE = '$ENV_FILE
@@ -39,7 +44,7 @@ function summary {
   echo "EXPOSED HTTP PORT: " $HTTP_PORT
   echo "GIT USER NAME : "$GIT_USER
   echo "GIT USER MAIL : "$GIT_MAIL
-  echo "PULL ADDRESS : http://<vhost>.<hostname>/pull/${GIT_PULL_SCRIPT_NAME}"
+  echo "PULL ADDRESS : http://<vhost>.<hostname>/git/${GIT_PULL_DIRECTORY_NAME}/pull.php"
 
   if [[ ! -z "$HTPASSWD_NAME" ]]; then
       echo "htpasswd file : "./www/.htpasswd/$HTPASSWD_NAME
@@ -70,32 +75,32 @@ export LOCAL_USER_ID;
 
 cat docker-compose.yml.tpl > ./cache/$DOCKERNAME.yml
 
-if [ ! -z "$HTTP_PORT" ] || [ ! -z "$HTTPS_PORT" ] ; then
+if [[ ! -z "$HTTP_PORT" ]] || [[ ! -z "$HTTPS_PORT" ]] ; then
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#ports:|ports:|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi
 
-if [ ! -z "$HTTP_PORT" ]; then
+if [[ ! -z "$HTTP_PORT" ]]; then
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#HTTP_PORT#|- ${HTTP_PORT}:80|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi;
 
-if [ ! -z "$HTTPS_PORT" ]; then
+if [[ ! -z "$HTTPS_PORT" ]]; then
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#HTTP_PORT#|- ${HTTPS_PORT}:443|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi;
 
-if [ ! -z "$VIRTUAL_HOST" ]; then
+if [[ ! -z "$VIRTUAL_HOST" ]]; then
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#VIRTUAL_HOST#|- VIRTUAL_HOST=${VIRTUAL_HOST}|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi;
 
-if [ ! -z "$LOCAL_USER_ID" ]; then
+if [[ ! -z "$LOCAL_USER_ID" ]]; then
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#LOCAL_USER_ID#|- LOCAL_USER_ID=${LOCAL_USER_ID}|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
 fi;
 
-if [ ! -z "$HTPASSWD_NAME" ]; then
+if [[ ! -z "$HTPASSWD_NAME" ]]; then
   touch ./www/.htpasswd/${HTPASSWD_NAME}
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#HTPASSWD#|- ./www/.htpasswd/${HTPASSWD_NAME}:/www/.htpasswd|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
@@ -109,8 +114,6 @@ if [ ! -z "$SHARED_ACCOUNTS_GROUP" ]; then
   echo "WILL STORE ACCOUNTS in  ./www/.shared/$SHARED_ACCOUNTS_GROUP/"
   cat ./cache/$DOCKERNAME.yml |sed -e "s|#SHARED_ACCOUNT_VOLUME#|- ./www/.shared/$SHARED_ACCOUNTS_GROUP/:/www/${DOCKERNAME}/user/accounts|" > /tmp/$DOCKERNAME.yml
   cat /tmp/$DOCKERNAME.yml > ./cache/$DOCKERNAME.yml
-#  cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - -p $DOCKERNAME down
-#  cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - -p $DOCKERNAME up -d
 fi
 
 cat ./cache/$DOCKERNAME.yml
@@ -126,7 +129,6 @@ sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|
 
 if [ ! -z "$HTPASSWD_NAME" ]; then
   sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#AUTH_BASIC#|auth_basic|\" /etc/nginx/conf.d/default.conf)"
-  #sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#AUTH_BASIC#|auth_basic|\" /etc/nginx/conf.d/default.conf)"
   sudo docker exec $NGINXNAME /bin/sh -c "(cat /etc/nginx/conf.d/default.conf)"
 fi;
 
@@ -197,13 +199,16 @@ read -p "grav has been downloaded (press a key) ..."
 
 ### SET GIT PULL SCRIPT WITH THE PROPER NAME INTO THE PULL DIRECTORY OF THE GRAV INSTALL
 
-GIT_PULL_SCRIPT_NAME=${GIT_PULL_SCRIPT_NAME:-"${DOCKERNAME}"'_pull.php'}
-cp -R ./nginx/pull "./www/${DOCKERNAME}/"
-mv ./www/${DOCKERNAME}/pull/pull.php ./www/${DOCKERNAME}/pull/${GIT_PULL_SCRIPT_NAME}
-mv ./www/${DOCKERNAME}/pull/gitignore ./www/${DOCKERNAME}/pull/.gitignore
+rm -Rf ./www/${DOCKERNAME}/git/
+mkdir ./www/${DOCKERNAME}/git/
+cp ./nginx/git/gitignore ./www/${DOCKERNAME}/git/
+mkdir "./www/${DOCKERNAME}/git/${GIT_PULL_DIRECTORY_NAME}/"
+cp -R ./nginx/git/* "./www/${DOCKERNAME}/git/${GIT_PULL_DIRECTORY_NAME}/"
 
-sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" ./www/${DOCKERNAME}/pull/${GIT_PULL_SCRIPT_NAME})"
-echo "pull request can be send to http://host:$HTTP_PORT/pull/$GIT_PULL_SCRIPT_NAME"
+sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" ./www/${DOCKERNAME}/git/${GIT_PULL_SCRIPT_NAME}/pull.php)"
+sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" ./www/${DOCKERNAME}/git/${GIT_PULL_SCRIPT_NAME}/commit.php)"
+
+echo "pull request can be send to http://host:$HTTP_PORT/git/${GIT_PULL_SCRIPT_NAME}/pull.php"
 
 summary;
 
