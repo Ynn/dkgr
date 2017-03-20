@@ -13,5 +13,5 @@ $output[] = "GitHub Pull\n============================\n" . shell_exec('cd '.$re
 
 
 // redirect output to logs
-file_put_contents(rtrim(getcwd(), '/').'/pull-log.php', implode("\n", $output) . "\n----------------------------\n", FILE_APPEND);
+file_put_contents(rtrim(getcwd(), '/').'/pull.log', implode("\n", $output) . "\n----------------------------\n", FILE_APPEND);
 ?>
