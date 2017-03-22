@@ -28,7 +28,7 @@ services:
     restart: always
     image : docker-grav-php
     build:
-      context : ./php-fpm
+      context : ./php
       dockerfile: Dockerfile
     environment:
       - DEBUG=0
