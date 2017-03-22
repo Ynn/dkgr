@@ -220,7 +220,7 @@ read -p "grav has been downloaded (press a key) ..."
 
 rm -Rf ./www/${DOCKERNAME}/git/
 mkdir ./www/${DOCKERNAME}/git/
-cp ./nginx/git/gitignore ./www/${DOCKERNAME}/git/
+cp ./nginx/git/gitignore ./www/${DOCKERNAME}/git/.gitignore
 mkdir "./www/${DOCKERNAME}/git/${GIT_PULL_DIRECTORY_NAME}/"
 cp -R ./nginx/git/* "./www/${DOCKERNAME}/git/${GIT_PULL_DIRECTORY_NAME}/"
 
