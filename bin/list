@@ -1,2 +1,2 @@
 #!/bin/bash
-sudo docker inspect --format "{{ index .Config.Labels \"com.docker.compose.project\"}}" $(docker ps -q -f "ancestor=docker-grav-php")
+sudo docker inspect --format "{{ index .Config.Labels \"com.docker.compose.project\"}}" $(docker ps -q -f "ancestor=nnynn/dkgr-nginx")
