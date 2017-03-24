@@ -140,7 +140,8 @@ cat ./cache/$DOCKERNAME.yml
 sudo docker network create www
 
 cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - -p $DOCKERNAME down
-cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - build
+sudo docker pull nnynn/dkgr-nginx:latest
+sudo docker pull nnynn/dkgr-php:latest
 cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - -p $DOCKERNAME up -d
 
 read -p "ready to configure NGINX ... change the default.conf root is to /www/$DOCKERNAME (PRESS A KEY OR CTRL+C TO ABORT)"
