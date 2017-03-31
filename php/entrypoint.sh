@@ -11,4 +11,6 @@ addgroup -S www
 adduser -S -s /bin/bash -u $USER_ID -G www www
 export HOME=/home/www
 
+chown www:www /composer
+
 exec su-exec root "$@"
