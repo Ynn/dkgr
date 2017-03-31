@@ -14,6 +14,7 @@ RUN apk --update add \
         php7-ctype \
         php7-curl \
         php7-fpm \
+        php7-zlib \
         php7-gd \
         php7-iconv \
         php7-intl \
@@ -37,21 +38,6 @@ RUN apk --update add \
 
 RUN ln -s /usr/bin/php7 /usr/bin/php
 
-# Register the COMPOSER_HOME environment variable
-ENV COMPOSER_HOME /composer
-
-# Add global binary directory to PATH and make sure to re-export it
-ENV PATH /composer/vendor/bin:$PATH
-
-# Allow Composer to be run as root
-ENV COMPOSER_ALLOW_SUPERUSER 1
-
-# Setup the Composer installer
-RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
-  && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
-  && php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { unlink('/tmp/composer-setup.php'); echo 'Invalid installer' . PHP_EOL; exit(1); }"
-
-
 EXPOSE 9000
 
 RUN sed -i \
@@ -67,6 +53,21 @@ RUN sed -i \
       -e 's|post_max_size = 8M|post_max_size = 1000M|' \
       -e 's|upload_max_filesize = 2M|upload_max_filesize = 1000M|' \
       /etc/php7/php.ini
+
+RUN mkdir /composer
+
+# Register the COMPOSER_HOME environment variable
+ENV COMPOSER_HOME /composer
+
+# Allow Composer to be run as root
+ENV COMPOSER_ALLOW_SUPERUSER 1
+
+# Setup the Composer installer
+RUN curl -o /tmp/composer-setup.php https://getcomposer.org/installer \
+  && curl -o /tmp/composer-setup.sig https://composer.github.io/installer.sig \
+  && php -r "if (hash('SHA384', file_get_contents('/tmp/composer-setup.php')) !== trim(file_get_contents('/tmp/composer-setup.sig'))) { unlink('/tmp/composer-setup.php'); echo 'Invalid installer' . PHP_EOL; exit(1); }" \
+  && php /tmp/composer-setup.php --install-dir=/usr/bin --filename=composer
+
 
 COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
