@@ -31,6 +31,7 @@ RUN apk --update add \
         php7-soap \
         php7-xml \
         php7-zip \
+        composer \
     && rm -rf /var/cache/apk/*
 
 RUN ln -s /usr/bin/php7 /usr/bin/php
