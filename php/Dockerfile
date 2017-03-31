@@ -54,7 +54,7 @@ RUN sed -i \
       -e 's|upload_max_filesize = 2M|upload_max_filesize = 1000M|' \
       /etc/php7/php.ini
 
-RUN mkdir /composer
+RUN mkdir /composer && chown www:www /composer
 
 # Register the COMPOSER_HOME environment variable
 ENV COMPOSER_HOME /composer
