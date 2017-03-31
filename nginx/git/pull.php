@@ -9,7 +9,7 @@ $output        = array();
 
 // update github Repo
 $output[] = date('Y-m-d, H:i:s', time()) . "\n";
-$output[] = "GitHub Pull\n============================\n" . shell_exec('cd '.$repo.' && git fetch origin && git reset --hard origin/'.$branch.' && git submodule update --init --recursive 2>&1');
+$output[] = "GitHub Pull\n============================\n" . shell_exec('cd '.$repo.' && git fetch origin && git reset --hard origin/'.$branch.' && git submodule update --recursive 2>&1');
 
 
 // redirect output to logs
