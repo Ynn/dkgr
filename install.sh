@@ -187,6 +187,7 @@ if [[ ! -d "./www/$DOCKERNAME/bin" ]]; then
     ./bin/git $DOCKERNAME fetch origin
     ./bin/permissions-fixing "$DOCKERNAME"
     ./bin/git $DOCKERNAME reset --hard origin/master
+    ./bin/git $DOCKERNAME submodule update --init --recursive
   fi
 else
   echo "THE TARGET DIRECTORY IS NOT EMPTY (SKIPPING DOWNLOAD)"
