@@ -214,9 +214,6 @@ mkdir -p ./www/$DOCKERNAME/images
 mkdir -p ./www/$DOCKERNAME/assets
 mkdir -p ./www/$DOCKERNAME/user/data
 
-read -p "grav has been downloaded (press a key) ..."
-
-./bin/permissions-fixing "$DOCKERNAME"
 
 ### SET GIT PULL SCRIPT WITH THE PROPER NAME INTO THE PULL DIRECTORY OF THE GRAV INSTALL
 
@@ -231,8 +228,11 @@ sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|
 
 echo "pull request can be send to http://host:$HTTP_PORT/git/${GIT_PULL_SCRIPT_NAME}/pull.php"
 
-summary;
+./bin/permissions-fixing "$DOCKERNAME"
 
+read -p "grav has been downloaded (press a key) ..."
+
+summary;
 
 echo "Grav is supposed to be accessible on http://localhost:$HTTP_PORT/ (unless you changed the port)"
 echo "If this is a new install (grav has been downloaded from official repo), you have to run grav-admin/grav $NGINXNAME install"

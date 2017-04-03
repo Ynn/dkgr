@@ -7,10 +7,12 @@ $repo          = '/www/#DOCKERNAME#';
 $branch        = 'master';
 $output        = array();
 
+//NOT ACTIVE DANGEROUS
+
 // update github Repo
-$output[] = date('Y-m-d, H:i:s', time()) . "\n";
-$output[] = "GitHub Pull\n============================\n" . shell_exec('cd '.$repo.' && git add user/pages/* && git commit -m "commit from main site" && git push origin master');
+//$output[] = date('Y-m-d, H:i:s', time()) . "\n";
+//$output[] = "GitHub Pull\n============================\n" . shell_exec('cd '.$repo.' && git add user/pages/* && git commit -m "commit from main site" && git push origin master');
 
 // redirect output to logs
-file_put_contents(rtrim(getcwd(), '/').'/commit.log', implode("\n", $output) . "\n----------------------------\n", FILE_APPEND);
+//file_put_contents(rtrim(getcwd(), '/').'/commit.log', implode("\n", $output) . "\n----------------------------\n", FILE_APPEND);
 ?>
