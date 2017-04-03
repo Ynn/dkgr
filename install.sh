@@ -223,12 +223,19 @@ cp ./nginx/git/gitignore ./www/${DOCKERNAME}/git/.gitignore
 mkdir "./www/${DOCKERNAME}/git/${GIT_PULL_DIRECTORY_NAME}/"
 cp -R ./nginx/git/* "./www/${DOCKERNAME}/git/${GIT_PULL_DIRECTORY_NAME}/"
 
+PULL_SCRIPT="/www/${DOCKERNAME}/git/${GIT_PULL_DIRECTORY_NAME}/pull.sh"
+sudo docker exec $NGINXNAME /bin/sh -c "(chown www:www ${PULL_SCRIPT} && chmod +x ${PULL_SCRIPT} && ls -l ${PULL_SCRIPT})"
 sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" ./www/${DOCKERNAME}/git/${GIT_PULL_SCRIPT_NAME}/pull.php)"
 sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" ./www/${DOCKERNAME}/git/${GIT_PULL_SCRIPT_NAME}/commit.php)"
 
+
+
 echo "pull request can be send to http://host:$HTTP_PORT/git/${GIT_PULL_SCRIPT_NAME}/pull.php"
 
+sudo docker exec $NGINXNAME /bin/sh -c "(ls -l ${PULL_SCRIPT})"
 ./bin/permissions-fixing "$DOCKERNAME"
+sudo docker exec $NGINXNAME /bin/sh -c "(ls -l ${PULL_SCRIPT})"
+
 
 read -p "grav has been downloaded (press a key) ..."
 

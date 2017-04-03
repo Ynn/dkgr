@@ -13,9 +13,9 @@ $output        = array();
 
 $dir = getcwd();
 $cmd = 'nohup '.$dir.'/pull.sh '.$repo.' '.$branch.'>>'.$dir.'/pull.log 2>&1 &';
-echo $cmd;
+//echo $cmd;
 echo shell_exec($cmd);
-
+echo "processing";
 
 // redirect output to logs
 //file_put_contents(rtrim(getcwd(), '/').'/pull.log', implode("\n", $output) . "\n----------------------------\n", FILE_APPEND);
