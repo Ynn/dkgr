@@ -8,37 +8,39 @@ RUN apk --update add \
         openssl \
         openssh-client \
         git \
-        php7 \
-        php7-bcmath \
-        php7-dom \
-        php7-ctype \
-        php7-curl \
-        php7-fpm \
-        php7-zlib \
-        php7-gd \
-        php7-iconv \
-        php7-intl \
-        php7-json \
-        php7-mbstring \
-        php7-mcrypt \
-        php7-mysqlnd \
-        php7-opcache \
-        php7-openssl \
-        php7-pdo \
-        php7-pdo_mysql \
-        php7-pdo_pgsql \
-        php7-pdo_sqlite \
-        php7-phar \
-        php7-posix \
-        php7-session \
-        php7-soap \
-        php7-xml \
-        php7-zip \
+        php5 \
+        php5-bcmath \
+        php5-dom \
+        php5-ctype \
+        php5-curl \
+        php5-fpm \
+        php5-zlib \
+        php5-gd \
+        php5-iconv \
+        php5-intl \
+        php5-json \
+#        php5-mbstring \
+        php5-mcrypt \
+#        php5-mysqlnd \
+        php5-opcache \
+        php5-openssl \
+        php5-pdo \
+        php5-pdo_mysql \
+        php5-pdo_pgsql \
+        php5-pdo_sqlite \
+        php5-phar \
+        php5-posix \
+#        php5-session \
+        php5-soap \
+        php5-xml \
+        php5-zip \
     && rm -rf /var/cache/apk/*
 
-RUN ln -s /usr/bin/php7 /usr/bin/php
+#RUN ln -s /usr/bin/php5 /usr/bin/php
 
 EXPOSE 9000
+
+RUN ls -al /etc/php5/conf.d
 
 RUN sed -i \
         -e 's|listen = 127.0.0.1:9000|listen = 9000|' \
@@ -46,13 +48,13 @@ RUN sed -i \
         -e 's|group = nobody|group = www|' \
        -e 's|;listen.owner = nobody|listen.owner = www|' \
        -e 's|;listen.group = nobody|listen.group = www|' \
-   /etc/php7/php-fpm.d/www.conf && cat /etc/php7/php-fpm.d/www.conf
+   /etc/php5/php-fpm.conf && (cat /etc/php5/php-fpm.conf |grep listen && cat  /etc/php5/php-fpm.conf |grep 'group =' && cat  /etc/php5/php-fpm.conf |grep 'user =')
 
 # Note that the value could be 0 to disable the limit
 RUN sed -i \
       -e 's|post_max_size = 8M|post_max_size = 1000M|' \
       -e 's|upload_max_filesize = 2M|upload_max_filesize = 1000M|' \
-      /etc/php7/php.ini
+      /etc/php5/php.ini && (cat /etc/php5/php.ini |grep post_max_size && cat /etc/php5/php.ini |grep upload_max_filesize)
 
 RUN mkdir /composer
 
@@ -73,4 +75,4 @@ COPY entrypoint.sh /usr/local/bin/entrypoint.sh
 RUN chmod +x /usr/local/bin/entrypoint.sh
 
 ENTRYPOINT ["/usr/local/bin/entrypoint.sh"]
-CMD ["php-fpm7", "-F"]
+CMD ["php-fpm", "-F"]
