@@ -19,6 +19,7 @@ RUN apk --update add \
         php5-iconv \
         php5-intl \
         php5-json \
+        php5-apcu \
 #        php5-mbstring \
         php5-mcrypt \
 #        php5-mysqlnd \

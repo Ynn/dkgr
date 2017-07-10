@@ -11,6 +11,7 @@ services :
           - ./encrypt/vhosts:/etc/nginx/vhost.d
           - ./encrypt/certs:/etc/nginx/certs
           - ./encrypt/html:/usr/share/nginx/html
+          - ./my_proxy.conf:/etc/nginx/conf.d/my_proxy.conf
       networks:
         - www
 
