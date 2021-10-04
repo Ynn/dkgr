@@ -1,4 +1,4 @@
-FROM alpine:3.5
+FROM php:8-fpm-alpine
 
 RUN apk --update add \
         bash \
@@ -8,54 +8,31 @@ RUN apk --update add \
         openssl \
         openssh-client \
         git \
-        php5 \
-        php5-bcmath \
-        php5-dom \
-        php5-ctype \
-        php5-curl \
-        php5-fpm \
-        php5-zlib \
-        php5-gd \
-        php5-iconv \
-        php5-intl \
-        php5-json \
-        php5-apcu \
-#        php5-mbstring \
-        php5-mcrypt \
-#        php5-mysqlnd \
-        php5-opcache \
-        php5-openssl \
-        php5-pdo \
-        php5-pdo_mysql \
-        php5-pdo_pgsql \
-        php5-pdo_sqlite \
-        php5-phar \
-        php5-posix \
-#        php5-session \
-        php5-soap \
-        php5-xml \
-        php5-zip \
+        libpng\
+        libpng-dev\
+        libzip-dev \
+        zip \
     && rm -rf /var/cache/apk/*
 
-#RUN ln -s /usr/bin/php5 /usr/bin/php
+RUN docker-php-ext-install gd posix zip
 
 EXPOSE 9000
 
-RUN ls -al /etc/php5/conf.d
+RUN ls -al /usr/local/etc/php
 
-RUN sed -i \
-        -e 's|listen = 127.0.0.1:9000|listen = 9000|' \
-        -e 's|user = nobody|user = www|' \
-        -e 's|group = nobody|group = www|' \
-       -e 's|;listen.owner = nobody|listen.owner = www|' \
-       -e 's|;listen.group = nobody|listen.group = www|' \
-   /etc/php5/php-fpm.conf && (cat /etc/php5/php-fpm.conf |grep listen && cat  /etc/php5/php-fpm.conf |grep 'group =' && cat  /etc/php5/php-fpm.conf |grep 'user =')
+RUN echo "listen = 9000" >> /usr/local/etc/php-fpm.conf
+RUN echo "user = www" >> /usr/local/etc/php-fpm.conf
+RUN echo "group = www" >> /usr/local/etc/php-fpm.conf 
+RUN echo "listen.owner = www" >> /usr/local/etc/php-fpm.conf
+RUN echo "listen.group = www" >> /usr/local/etc/php-fpm.conf
+
 
 # Note that the value could be 0 to disable the limit
 RUN sed -i \
+      -e 's|;extension=|extension=|' \
       -e 's|post_max_size = 8M|post_max_size = 1000M|' \
       -e 's|upload_max_filesize = 2M|upload_max_filesize = 1000M|' \
-      /etc/php5/php.ini && (cat /etc/php5/php.ini |grep post_max_size && cat /etc/php5/php.ini |grep upload_max_filesize)
+      /usr/local/etc/php/php.ini-production && (cat /usr/local/etc/php/php.ini-production |grep post_max_size && cat /usr/local/etc/php/php.ini-production |grep upload_max_filesize)
 
 RUN mkdir /composer
 

@@ -2,11 +2,11 @@ version: "2"
 services:
   web:
     restart: always
-    image : nnynn/dkgr-nginx:latest
-#    image : dkgr-nginx
-#    build:
-#      context : ./nginx
-#      dockerfile: Dockerfile
+    #image : nnynn/dkgr-nginx:latest
+    image : dkgr-nginx
+    build:
+      context : ./nginx
+      dockerfile: Dockerfile
     #ports:
        #HTTP_PORT#
        #HTTPS_PORT#
@@ -27,11 +27,11 @@ services:
       - www
   php:
     restart: always
-    image : nnynn/dkgr-php:latest
-#    image : dkgr-php:last
-#    build:
-#      context : ./php
-#      dockerfile: Dockerfile
+    #image : nnynn/dkgr-php:latest
+    image : dkgr-php
+    build:
+      context : ./php
+      dockerfile: Dockerfile
     environment:
       - DEBUG=0
       #LOCAL_USER_ID#
