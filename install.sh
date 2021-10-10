@@ -74,7 +74,7 @@ DOCKERNAME="$GRAV_INSTANCE_NAME"
 NGINXNAME="$DOCKERNAME"_web_1
 mkdir ./www/$DOCKERNAME 2> /dev/null
 
-read -p "Is this configuration OK ? Press a key to continue or CTRL+C to abort ..."
+# read -p "Is this configuration OK ? Press a key to continue or CTRL+C to abort ..."
 
 
 export HTTP_PORT;
@@ -144,7 +144,7 @@ sudo docker pull nnynn/dkgr-nginx:latest
 sudo docker pull nnynn/dkgr-php:latest
 cat ./cache/$DOCKERNAME.yml | sudo docker-compose -f - -p $DOCKERNAME up -d
 
-read -p "ready to configure NGINX ... change the default.conf root is to /www/$DOCKERNAME (PRESS A KEY OR CTRL+C TO ABORT)"
+# read -p "ready to configure NGINX ... change the default.conf root is to /www/$DOCKERNAME (PRESS A KEY OR CTRL+C TO ABORT)"
 sudo docker exec $NGINXNAME /bin/sh -c "(sed -i -e \"s|#DOCKERNAME#|$DOCKERNAME|\" /etc/nginx/conf.d/default.conf)"
 
 if [ ! -z "$HTPASSWD_NAME" ]; then
@@ -208,7 +208,7 @@ else
   echo "no system git repository"
 fi
 
-
+mkdir -p ./www/$DOCKERNAME/tmp
 mkdir -p ./www/$DOCKERNAME/logs
 mkdir -p ./www/$DOCKERNAME/images
 mkdir -p ./www/$DOCKERNAME/assets
@@ -237,7 +237,7 @@ sudo docker exec $NGINXNAME /bin/sh -c "(ls -l ${PULL_SCRIPT})"
 sudo docker exec $NGINXNAME /bin/sh -c "(ls -l ${PULL_SCRIPT})"
 
 
-read -p "grav has been downloaded (press a key) ..."
+# read -p "grav has been downloaded (press a key) ..."
 
 summary;
 
